@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:naiki_station/menu.dart';
+import 'package:naiki_station/screens/menu.dart';
 
 void main() {
   runApp(const MyApp());
