@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:naiki_station/screens/menu.dart';
 import 'package:naiki_station/screens/productlist_form.dart';
 import 'package:naiki_station/widgets/product_card.dart';
+// Add this import at the top
+import 'package:naiki_station/screens/product_entry_list.dart';
 
 
 class LeftDrawer extends StatelessWidget {
@@ -71,7 +73,7 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MyHomePage() //TODO PAS UDAH ADA VIEW Product NANTI UBAH
+                    builder: (context) => ProductEntryListPage() //TODO PAS UDAH ADA VIEW Product NANTI UBAH
 
                   ));
             },

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:naiki_station/widgets/left_drawer.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:naiki_station/screens/menu.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -12,22 +16,24 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _name = "";
-  int _price = 0; 
+  int _price = 0;
   String _description = "";
-  
-  String _category = "update"; 
+
+  String _category = "Sneakers";
   String _thumbnail = "";
+  bool _isFeatured = false;
 
   final List<String> _categories = [
-    'transfer',
-    'update',
-    'exclusive',
-    'match',
-    'rumor',
-    'analysis',
+    'Sneakers',
+    'Running Shoes',
+    'Boots',
+    'Sandals',
+    'Apparel',
+    'Accessories',
   ];
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -44,7 +50,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
         child: SingleChildScrollView(
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
+                children: [
                   // === Name ===
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -60,13 +66,13 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         setState(() {
                           _name = value!;
                         });
-                        },
+                      },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
                           return "Nama produk tidak boleh kosong!";
                         }
                         return null;
-                        },
+                      },
                     ),
                   ),
                   // === Price ===
@@ -86,7 +92,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                           // Menggunakan tryParse untuk menghindari error jika input bukan angka
                           _price = int.tryParse(value ?? "") ?? 0;
                         });
-                        },
+                      },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
                           return "Harga tidak boleh kosong!";
@@ -98,7 +104,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                           return "Harga tidak boleh negatif atau nol!";
                         }
                         return null;
-                        },
+                      },
                     ),
                   ),
                   // === Description ===
@@ -140,16 +146,32 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       value: _category,
                       items: _categories
                           .map((cat) => DropdownMenuItem(
-                        value: cat,
-                        child: Text(
-                            cat[0].toUpperCase() + cat.substring(1)),
-                      ))
+                                value: cat,
+                                child: Text(
+                                    cat[0].toUpperCase() + cat.substring(1)),
+                              ))
                           .toList(),
                       onChanged: (String? newValue) {
                         setState(() {
                           _category = newValue!;
                         });
                       },
+                    ),
+                  ),
+
+                  // === Is Featured ===
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CheckboxListTile(
+                      title: const Text("Featured Product"),
+                      value: _isFeatured,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _isFeatured = value ?? false;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero, // To align with TextFormFields
                     ),
                   ),
 
@@ -180,48 +202,40 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all(Colors.indigo),
+                              MaterialStateProperty.all(Colors.indigo),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Produk berhasil disimpan!'),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Nama: $_name'),
-                                        Text('Harga: $_price'),
-                                        Text('Deskripsi: $_description'),
-                                        Text('Kategori: $_category'),
-                                        Text('Thumbnail: $_thumbnail'),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text('OK'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
+                            final response = await request.postJson(
+                              "http://127.0.0.1:8000/create-flutter/",
+                              jsonEncode(<String, dynamic>{
+                                "name": _name,
+                                "price": _price,
+                                "description": _description,
+                                "thumbnail": _thumbnail,
+                                "category": _category,
+                                "is_featured": _isFeatured,
+                              }),
                             );
-                            // Reset form dan state variables
-                            _formKey.currentState!.reset();
-                            setState(() {
-                              _name = "";
-                              _price = 0;
-                              _description = "";
-                              _category = "update";
-                              _thumbnail = "";
-                            });
+                            if (context.mounted) {
+                              if (response['status'] == 'success') {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text("Product successfully saved!"),
+                                ));
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyHomePage()),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content:
+                                      Text("Something went wrong, please try again."),
+                                ));
+                              }
+                            }
                           }
                         },
                         child: const Text(
@@ -238,4 +252,3 @@ class _ProductFormPageState extends State<ProductFormPage> {
     );
   }
 }
-
