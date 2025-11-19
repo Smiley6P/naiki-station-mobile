@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:naiki_station/screens/menu.dart';
 import 'package:naiki_station/screens/productlist_form.dart';
 import 'package:naiki_station/screens/product_entry_list.dart';
+// Import halaman My Products yang baru dibuat
+import 'package:naiki_station/screens/my_product_entry.dart';
 import 'package:naiki_station/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
 class ItemCard extends StatelessWidget {
   // Menampilkan kartu dengan ikon dan nama.
-
   final ItemHomepage item;
 
   const ItemCard(this.item, {super.key});
@@ -32,13 +33,13 @@ class ItemCard extends StatelessWidget {
                 SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
             );
 
-
-          // Navigasi ke Halaman Form 
+          // Navigasi ke Halaman Create Product
           if (item.name == "Create Product") {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const ProductFormPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const ProductFormPage()));
           }
-          else if (item.name == "See Football News") {
+          // Navigasi ke Halaman All Products
+          else if (item.name == "All Products") {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -46,12 +47,19 @@ class ItemCard extends StatelessWidget {
               ),
             );
           }
+          // Navigasi ke Halaman My Products
+          else if (item.name == "My Product(s)") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const MyProductEntryPage()
+              ),
+            );
+          }
+          // Logika Logout (jika nanti tombol logout dipindah ke grid)
           else if (item.name == "Logout") {
-            // TODO: Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
-            // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
-            // If you using chrome,  use URL http://localhost:8000
-
             final response = await request.logout(
+              // Ganti URL sesuai environment (localhost / 10.0.2.2)
                 "http://localhost:8000/auth/logout/");
             String message = response["message"];
             if (context.mounted) {
@@ -73,9 +81,6 @@ class ItemCard extends StatelessWidget {
               }
             }
           }
-          // ide buat kedepannya:
-          // else if (item.name == "All Products") { ... }
-          // else if (item.name == "My Product(s)") { ... }
         },
         // Container untuk menyimpan Icon dan Text
         child: Container(
@@ -103,5 +108,4 @@ class ItemCard extends StatelessWidget {
       ),
     );
   }
-
 }

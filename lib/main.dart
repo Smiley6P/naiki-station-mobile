@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Naiki Station',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
-                .copyWith(secondary: Colors.blueAccent[400]),
+            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)
+                .copyWith(secondary: Colors.greenAccent),
           ),
           home: const LoginPage(),
         ),

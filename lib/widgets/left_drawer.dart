@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:naiki_station/screens/menu.dart';
 import 'package:naiki_station/screens/productlist_form.dart';
 import 'package:naiki_station/widgets/product_card.dart';
-// Add this import at the top
 import 'package:naiki_station/screens/product_entry_list.dart';
+import 'package:naiki_station/screens/my_product_entry.dart';
 
 
 class LeftDrawer extends StatelessWidget {
@@ -75,6 +75,17 @@ class LeftDrawer extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => ProductEntryListPage() //TODO PAS UDAH ADA VIEW Product NANTI UBAH
 
+                  ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person_search),
+            title: const Text('My Products'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyProductEntryPage(),
                   ));
             },
           ),
