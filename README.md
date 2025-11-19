@@ -123,9 +123,10 @@ layaknya menjalankan aplikasi dari awal lagi, tapi masih lebih cepat dibanding f
 
 </details>
 
+## Tugas 8
+
 <details>
 <summary>Jawaban</summary>
-## Tugas 8
 
 1. Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
 
